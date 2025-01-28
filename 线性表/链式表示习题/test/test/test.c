@@ -322,26 +322,134 @@ LNode* FindLoopStart(LNode* head)
 	return p1;
 }
 
+// #16 - P43
+int PairSum(LinkList L) {
+	LNode* fast = L->next, * slow = L;
+	while (fast != NULL && fast->next != NULL) {
+		fast = fast->next->next;
+		slow = slow->next;
+	}
+	LNode** newhead = NULL, * p = slow->next, * tmp;
+	while (p != NULL) {
+		tmp = p->next;
+		p->next = newhead;
+		newhead = p;
+		p = tmp;
+	}
+	slow->next = NULL;
+	int max = 0; p = L;
+	LNode* q = newhead;
+	while (q != NULL) {
+		if (p->data.i + q->data.i > max)
+			max = p->data.i + q->data.i;
+		p = p->next;
+		q = q->next;
+	}
+	return max;
+}
 
+// #17 -P43
+LNode* Search_k(LinkList L, int k) {
+	LNode* p = L->next, * q = p;
+	int count = 0;
+	while (p != NULL) {
+		if (count < k) count++;
+		else q = q->next;
+		p = p->next;
+	}
+	if (count < k) return 0;
+	else {
+		printf("%d", q->data.i);
+		return 1;
+	}
+}
 
+// #18 - P44
+typedef struct SNode{
+	char data;
+struct SNode* next;
+}SNode;
+int Listlen(SNode* head) {
+	int len = 0;
+	while (head->next != NULL) {
+		len++;
+		head = head->next;
+	}
+	return len;
+}
+SNode* Find_List(SNode* str1, SNode* str2) {
+	int m, n;
+	SNode* p, * q;
+	m = Listlen(str1);
+	n = Listlen(str2);
+	for (p = str1; m > n; m--) {
+		p = p->next;
+	}
+	for (q = str2; n > m; n--) {
+		q = q->next;
+	}
+	while (p->next != NULL && q->next != p->next) {
+		p = p->next;
+		q = q->next;
+	}
+	return p->next;
+}
 
+// #19 - P44
+typedef struct node {
+	int data;
+	struct node* link;
+}NODE, *PNODE;
+void func(PNODE h, int n) {
+	PNODE p = h, r;
+	int* q, m;
+	q = (int*)malloc(sizeof(int) * (n + 1));
+	for (int i = 0; i < n + 1; i++)	*(q + i) = 0;
+	while (p->link != NULL) {
+		m = p->link->data > 0 ? p->link->data : -p->link->data;
+		if (*(q + m) == 0) {
+			*(q + m) = 1;
+			p = p->link;
+		}
+		else {
+			r = p->link;
+			p->link = r->link;
+			free(r);
+		}
+	}
+	free(q);
+}
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// #20 - P44
+typedef struct node {
+	int data;
+	struct node* next;
+}NODE;
+void change_list(NODE* h) {
+	NODE* p, * q, * r, * s;
+	p = q = h;
+	while (q->next != NULL) {
+		p = p->next;
+		q = q->next;
+		if (q->next != NULL) q = q->next;
+	}
+	q = p->next;
+	p->next = NULL;
+	while (q != NULL) {
+		r = q->next;
+		q->next = p->next;
+		p->next = q;
+		q = r;
+	}
+	s = h->next;
+	q = p->next;
+	p->next = NULL;
+	while (q != NULL) {
+		r = q->next;
+		q->next = s->next;
+		s->next = q;
+		s = q->next;
+		q = r;
+	}
+}
 
