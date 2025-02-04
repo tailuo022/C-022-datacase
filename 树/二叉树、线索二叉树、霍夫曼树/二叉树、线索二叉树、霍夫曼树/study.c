@@ -168,17 +168,20 @@ void PreOrderTraverseByStack(BiTree T) {
 } //先序遍历非递归算法
 
 void InOrderTraverseByStack(BiTree T) {
-	Stack S; InitStack(&S);
+	if (!T) {
+		return;
+	}
+	Stack S;InitStack(&S);
 	BiNode* p = T;
-	while (p != NULL || !StackEmpty(&S)) {
+	while (p || !StackEmpty(&S)) {
 		if (p) {
 			Push(&S, p);
 			p = p->lchild;
 		}
 		else {
-			BiNode* q;
-			q = (BiNode*)malloc(sizeof(BiNode));
-			Pop(&S, q); printf("%c ", q->data);
+			BiNode* q = (BiNode*)malloc(sizeof(BiNode));
+			Pop(&S, q);
+			printf("%c ", q->data);
 			p = q->rchild;
 		}
 	}
@@ -207,6 +210,17 @@ void PostOrderTraverseByStack(BiTree T) {
 	}
 } //后序遍历非递归算法
 
+BiTree copyBiTree(BiTree T) {
+	if (T == NULL) {
+		return NULL;
+	}
+	BiNode* CT = (BiNode*)malloc(sizeof(BiNode));
+	CT->data = T->data;
+	CT->lchild = copyBiTree(T->lchild);
+	CT->rchild = copyBiTree(T->rchild);
+	return CT;
+} //复制二叉树
+
 void LevelTraverse(BiTree T) {
 	Queue Q; InitQueue(&Q);
 	BiNode* p = T;
@@ -222,7 +236,38 @@ void LevelTraverse(BiTree T) {
 			EnQueue(&Q, *q->rchild);
 		}
 	}
-} //
+} //层次遍历二叉树
+
+int DepthBiTree(BiTree T) {
+	if (T == NULL) {
+		return 0;
+	}
+	int m = DepthBiTree(T->lchild);
+	int n = DepthBiTree(T->rchild);
+	if (m > n) {
+		return m + 1;
+	}
+	else {
+		return n + 1;
+	}
+} //计算二叉树的深度
+
+int nodeCount(BiTree T) {
+	if (T == NULL) {
+		return 0;
+	}
+	return nodeCount(T->lchild) + nodeCount(T->rchild) + 1;
+} //求二叉树的节点个数
+
+int leafCount(BiTree T) {
+	if (T == NULL) {
+		return 0;
+	}
+	if (T->lchild == NULL && T->rchild == NULL) {
+		return 1;
+	}
+	return leafCount(T->lchild) + leafCount(T->rchild);
+} //求二叉树的叶子个数
 
 int main() {
 	BiTree T;
@@ -245,6 +290,26 @@ int main() {
 	PostOrderTraverseByStack(T);
 	printf("\n--------层次遍历二叉树----------\n");
 	LevelTraverse(T);
+
+	printf("\n\n--------复制二叉树----------\n");
+	BiTree CT;
+	CT = (BiTree)malloc(sizeof(BiNode));
+	InitBiTree(CT);
+	CT = copyBiTree(T);
+	printf("\n--------先序遍历复制二叉树----------\n");
+	PreOrderTraverse(CT);
+	printf("\n--------中序遍历复制二叉树----------\n");
+	InOrderTraverse(CT);
+	printf("\n--------后序遍历复制二叉树----------\n");
+	PostOrderTraverse(CT);
+	printf("\n\n");
+
+	int depth = DepthBiTree(T);
+	printf("二叉树的深度为:%d\n", depth);
+	int nodecount = nodeCount(T);
+	printf("二叉树的节点个数为:%d\n", nodecount);
+	int leafcount = leafCount(T);
+	printf("二叉树的叶子个数为:%d\n", leafcount);
 
 	return 0;
 }
