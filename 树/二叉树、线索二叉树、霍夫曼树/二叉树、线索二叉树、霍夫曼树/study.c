@@ -57,6 +57,14 @@ void Pop(Stack* S, BiNode* T) {
 	*T = *--S->top;
 } //出栈
 
+void Peek(Stack* S, BiNode* T) {
+	if (S->base == S->top) {
+		printf("栈空\n");
+		return;
+	}
+	*T = *(S->top - 1);
+} //取出栈顶
+
 int StackEmpty(Stack* S) {
 	if (S->top == S->base) {
 		return 1;
@@ -187,7 +195,7 @@ void InOrderTraverseByStack(BiTree T) {
 	}
 } //中序遍历非递归算法
 
-void PostOrderTraverseByStack(BiTree T) {
+void PostOrderTraverseByStack2(BiTree T) {
 	Stack S1; InitStack(&S1);
 	Stack S2; InitStack(&S2);
 	BiNode* p = T;
@@ -208,7 +216,32 @@ void PostOrderTraverseByStack(BiTree T) {
 		Pop(&S2, q);
 		printf("%c ", q->data);
 	}
-} //后序遍历非递归算法
+} //后序遍历非递归算法(两个栈)
+
+void PostOrderTraverseByStack1(BiTree T) {
+	BiNode* h = T;
+	if (T) {
+		Stack S; InitStack(&S);
+		Push(&S, h);
+		while (!StackEmpty(&S)) {
+			BiNode* p = (BiNode*)malloc(sizeof(BiNode));
+			Peek(&S, p);
+			if (p->lchild != NULL && h != p->lchild && h != p->rchild) {
+				Push(&S, p->lchild);
+			}
+			else if (p->rchild != NULL && h != p->rchild) {
+				Push(&S, p->rchild);
+			}
+			else {
+				printf("%c ", p->data);
+				Pop(&S, h);
+			}
+		}
+	}
+	else {
+		return;
+	}
+} //后序遍历非递归算法(一个栈)
 
 BiTree copyBiTree(BiTree T) {
 	if (T == NULL) {
@@ -286,8 +319,10 @@ int main() {
 	PreOrderTraverseByStack(T);
 	printf("\n--------中序遍历非递归算法----------\n");
 	InOrderTraverseByStack(T);
-	printf("\n--------后序遍历非递归算法----------\n");
-	PostOrderTraverseByStack(T);
+	printf("\n--------后序遍历非递归算法(两个栈)----------\n");
+	PostOrderTraverseByStack2(T);
+	printf("\n--------后序遍历非递归算法(一个栈)----------\n");
+	PostOrderTraverseByStack1(T);
 	printf("\n--------层次遍历二叉树----------\n");
 	LevelTraverse(T);
 
